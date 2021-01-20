@@ -1,7 +1,9 @@
+//Import des packages
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
+//Inscription
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
@@ -22,13 +24,15 @@ exports.login = (req, res, next) => {
             if (!user) {
                 return res.status(401).json({ error: 'Utilisateur non trouvé !' });
             }
+            //Compare le mot de passe envoyer par le frontend avec le mot de passe dans la collection User
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
                     if (!valid) {
                         return res.status(401).json({ error: 'Mot de passe incorrect !' });
                     }
                     res.status(200).json({
-                        userId: user._id,
+                        userId: user._id, 
+                        //Signe un token avec jsonwebtoken  
                         token: jwt.sign(
                             { userId: user._id },
                             'RANDOM_TOKEN_SECRET',
