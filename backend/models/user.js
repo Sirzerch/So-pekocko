@@ -4,7 +4,6 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 //Création du schéma de données pour les Utilisateurs
 const userSchema = mongoose.Schema({
-    userId: { type: String, required: true},
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true }
 });
