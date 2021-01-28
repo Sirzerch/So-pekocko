@@ -3,20 +3,27 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
+
 //Inscription
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
-            bcrypt.hash(req.body.email, 10)
-                .then(hashEmail => {
-                    const user = new User({
-                        email: hashEmail,
-                        password: hash
-                    })
-                    user.save()
-                        .then(() => res.status(201).json({ message: 'Utilisateur crée !' }))
-                        .catch(error => res.status(400).json({ error }))
-                });
+            const user_email = req.body.email
+            protect_email = function () {
+                let splitted = user_email.split("@");
+                let part1 = splitted[0];
+                let avg = part1.length / 2;
+                part1 = part1.substring(0, (part1.length - avg));
+                part2 = splitted[1];
+                return part1 + "...@" + part2;
+            };
+            const user = new User({
+                email: protect_email(),
+                password: hash
+            })
+            user.save()
+                .then(() => res.status(201).json({ message: 'Utilisateur crée !' }))
+                .catch(error => res.status(400).json({ error }))
         })
         .catch(error => res.status(500).json({ error }));
 };
